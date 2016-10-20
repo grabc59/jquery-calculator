@@ -7,35 +7,65 @@ $( document ).ready(function() {
 //////////////////////////////////////
 ////////// BUTTON LISTENER TEST
 //////////////////////////////////////
-$('#buttons-container').on('click', function(event) {
-  var $target = $(event.target);
-  if ($target.text() === "C") {
-      clearScreen();
-  } else {
-    switch ($target.text()) {
-      case "÷":
+  $('#buttons-container').on('click', function(event) {
+    var $target = $(event.target);
+    if ($target.text() === "C") {
+        clearScreen();
+    } else if (calcInput === "Error") {
+        // Do not allow input other than "clear" on error
+        return;
+      } else {
+      switch ($target.text()) {
+        case "÷":
+            operatorCheck($target);
+            if (calcInput === "Error") {
+              return;
+            } else {
+              calcInput += "/";
+            }
+          break;
+        case "x":
+          operatorCheck($target);
+          if (calcInput === "Error") {
+            return;
+          } else {
+            calcInput += "*";
+          }
+            break;
+        case "+":
+          operatorCheck($target);
+          if (calcInput === "Error") {
+            return;
+          } else {
+            calcInput += "+";
+          }
+          break;
+        case "-":
         operatorCheck($target);
-        calcInput += "/";
-        break;
-      case "x":
-        calcInput += "*";
-        break;
-      case "+":
-        calcInput += "+";
-        break;
-      case "-":
-        calcInput += "-";
-        break;
-      case "=":
-        calcInput = eval(calcInput);
-        break;
-      default:
-        calcInput += $target.text(); // add the current target text to the stored calcInput variable. Intended to be numbers.
+        if (calcInput === "Error") {
+          return;
+        } else {
+          calcInput += "-";
+        }
+          break;
+        case "=":
+        operatorCheck($target);
+        if (calcInput === "Error") {
+          return;
+        } else {
+          calcInput = eval(calcInput);
+        }
+          break;
+        default:
+          if (calcInput === "Error") {
+            return;
+          } else {
+            calcInput += $target.text(); // add the current target text to the stored calcInput variable. Intended to be numbers.
+          }
+      }
     }
-  }
-    // console.log(calcInput);
-    $screen.text(calcInput); // every time a button is clicked, update the screen with all input
-
+  // console.log(calcInput);
+  $screen.text(calcInput); // every time a button is clicked, update the screen with all input
 
 });
 
@@ -61,6 +91,7 @@ function clearScreen() {
     for (var i = 0; i < operators.length; i++) {
       if (lastChar === operators[i]) {
         calcInput = "Error";
+        $screen.text(calcInput);
       }
     }
   }
