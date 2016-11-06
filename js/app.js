@@ -18,11 +18,7 @@ $( document ).ready(function() {
       switch ($target.text()) {
         case "÷":
             operatorCheck($target);
-            if (calcInput === "Error") {
-              return;
-            } else {
-              calcInput += "/";
-            }
+            calcInput += "/";
           break;
         case "x":
           operatorCheck($target);
@@ -85,13 +81,14 @@ function clearScreen() {
 //////////////////////////////////////
 ////////// CHECK FOR MULTIPLE OPERATORS
 //////////////////////////////////////
-  function operatorCheck($target) {
+  function operatorCheck() {
     var operators = ["+", "-", "*", "/"];
     var lastChar = calcInput.slice(calcInput.length-1)
     for (var i = 0; i < operators.length; i++) {
       if (lastChar === operators[i]) {
         calcInput = "Error";
         $screen.text(calcInput);
+        return;
       }
     }
   }
