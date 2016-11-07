@@ -15,38 +15,62 @@ $(document).ready(function() {
           var $target = $(event.target);
           currentIsOperator = $target.hasClass("operator");
             if ($target.text() === "C") {
-                calcInput = "";
+                // calcInput = "";
+                $screen.val("");
             } else if (calcInput === "Error") {
                 return;
             } else if (currentIsOperator && prevWasOperator) {
-                calcInput = "Error";
-                $screen.text(calcInput);
+                $screen.val("Error");
+                // calcInput = "Error";
+                // $screen.text(calcInput);
             } else {
                 // at this point the entry will be added to the calculator input. to prepare for the next input, this input becomes the 'previous' input (the value of whether the 'current' was an operator passes to 'previous')
                 prevWasOperator = currentIsOperator;
                 switch ($target.text()) {
                     case "÷":
-                        calcInput += "/";
+                        // calcInput += "/";
+                        $screen.val($screen.val() + "/");
                         break;
                     case "x":
-                        calcInput += "*";
+                        // calcInput += "*";
+                        $screen.val($screen.val() + "*");
                         break;
                     case "+":
-                        calcInput += "+";
+                        // calcInput += "+";
+                        $screen.val($screen.val() + "+");
                         break;
                     case "-":
-                        calcInput += "-";
+                        // calcInput += "-";
+                        $screen.val($screen.val() + "-");
                         break;
                     case "=":
-                        calcInput = eval(calcInput);
+                        // calcInput = eval(calcInput);
+                        $screen.val(eval($screen.val()));
                         // don't treat 'equals' as an operator, set it to false. this allows operations to be done on a calculated result.
                         prevWasOperator = false;
                         break;
                     default:
-                        calcInput += $target.text();
+                        // calcInput += $target.text();
+                        $screen.val($screen.val() + $target.text());
                 }
             }
         }
-        $screen.text(calcInput); // every time a button is clicked, update the screen with all input
+        // $screen.text(calcInput); // every time a button is clicked, update the screen with all input
     });
+
+
+
+////////////////////////////
+/////// KEYBOARD EVENTS
+////////////////////////////
+    $(window).keydown(function (e) {
+       var key = e.which;
+       if (key === 13) { // enter
+         $screen.val(eval($screen.val()));
+         prevWasOperator = false;
+       } else if (key === 27) { // esc
+         $screen.val("");
+       }
+    });
+
 });
