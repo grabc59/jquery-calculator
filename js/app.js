@@ -1,95 +1,47 @@
 'use strict';
-$( document ).ready(function() {
-  var $screen = $('#screen');
-  var calcInput = "";
-  $screen.text(calcInput);
+$(document).ready(function() {
+    var $screen = $('#screen');
+    var calcInput = "";
+    var currentIsOperator = false;
+    var prevWasOperator = false;
 
-//////////////////////////////////////
-////////// BUTTON LISTENER TEST
-//////////////////////////////////////
-  $('#buttons-container').on('click', function(event) {
-    var $target = $(event.target);
-    if ($target.text() === "C") {
-        clearScreen();
-    } else if (calcInput === "Error") {
-        // Do not allow input other than "clear" on error
-        return;
-      } else {
-      switch ($target.text()) {
-        case "÷":
-            operatorCheck($target);
-            calcInput += "/";
-          break;
-        case "x":
-          operatorCheck($target);
-          if (calcInput === "Error") {
-            return;
-          } else {
-            calcInput += "*";
-          }
-            break;
-        case "+":
-          operatorCheck($target);
-          if (calcInput === "Error") {
-            return;
-          } else {
-            calcInput += "+";
-          }
-          break;
-        case "-":
-        operatorCheck($target);
-        if (calcInput === "Error") {
-          return;
+
+    //////////////////////////////////////
+    ////////// BUTTON LISTENER TEST
+    //////////////////////////////////////
+    $('#buttons-container').on('click', function(event) {
+        var $target = $(event.target);
+        currentIsOperator = $target.hasClass("operator");
+        if ($target.text() === "C") {
+            calcInput = ""
+        } else if (currentIsOperator && prevWasOperator) {
+            calcInput = "Error";
+            $screen.text(calcInput);
         } else {
-          calcInput += "-";
+            // at this point the entry will be added to the calculator input. to prepare for the next input, this input becomes the 'previous' input (the value of whether the 'current' was an operator passes to 'previous')
+            prevWasOperator = currentIsOperator;
+            switch ($target.text()) {
+                case "÷":
+                    calcInput += "/";
+                    break;
+                case "x":
+                    calcInput += "*";
+                    break;
+                case "+":
+                    calcInput += "+";
+                    break;
+                case "-":
+                    calcInput += "-";
+                    break;
+                case "=":
+                    calcInput = eval(calcInput);
+                    // don't treat 'equals' as an operator, set it to false. this allows operations to be done on a calculated result.
+                    prevWasOperator = false;
+                    break;
+                default:
+                    calcInput += $target.text();
+            }
         }
-          break;
-        case "=":
-        operatorCheck($target);
-        if (calcInput === "Error") {
-          return;
-        } else {
-          calcInput = eval(calcInput);
-        }
-          break;
-        default:
-          if (calcInput === "Error") {
-            return;
-          } else {
-            calcInput += $target.text(); // add the current target text to the stored calcInput variable. Intended to be numbers.
-          }
-      }
-    }
-  // console.log(calcInput);
-  $screen.text(calcInput); // every time a button is clicked, update the screen with all input
-
-});
-
-//////////////////////////////////////
-////////// SCREEN TEST
-//////////////////////////////////////
-// $('#screen').text('hello');
-
-//////////////////////////////////////
-////////// CLEARSCREEN
-//////////////////////////////////////
-function clearScreen() {
-  calcInput = "";
-}
-
-
-//////////////////////////////////////
-////////// CHECK FOR MULTIPLE OPERATORS
-//////////////////////////////////////
-  function operatorCheck() {
-    var operators = ["+", "-", "*", "/"];
-    var lastChar = calcInput.slice(calcInput.length-1)
-    for (var i = 0; i < operators.length; i++) {
-      if (lastChar === operators[i]) {
-        calcInput = "Error";
-        $screen.text(calcInput);
-        return;
-      }
-    }
-  }
+        $screen.text(calcInput); // every time a button is clicked, update the screen with all input
+    });
 });
